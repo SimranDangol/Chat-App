@@ -15,7 +15,10 @@ const App = () => {
   console.log(currentUser);
 
   const dispatch = useDispatch();
-  const BASE_URL = "http://localhost:5000";
+  // const BASE_URL = "http://localhost:5000";
+  const BASE_URL = import.meta.env.NODE_ENV === 'production' 
+  ? "*" 
+  : "http://localhost:5000"
 
   useEffect(() => {
     if (currentUser) {

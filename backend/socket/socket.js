@@ -12,7 +12,7 @@ export const getReceiverSocketId = (receiverId) => {
 export const initializeSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: process.env.NODE_ENV === "production" ? "*" : "http://localhost:5173",
       credentials: true,
     },
   });

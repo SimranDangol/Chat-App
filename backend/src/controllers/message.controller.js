@@ -3,9 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-import { getReceiverSocketId,getIO } from "../../socket/socket.js";
-
-
+import { getReceiverSocketId, getIO } from "../../socket/socket.js";
 
 export const getMessages = asyncHandler(async (req, res) => {
   const { id: userToChatId } = req.params;
@@ -55,4 +53,3 @@ export const sendMessage = asyncHandler(async (req, res) => {
 
   return res.status(201).json(new ApiResponse(201, populatedMessage));
 });
-
