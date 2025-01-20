@@ -16,19 +16,31 @@ const App = () => {
 
   const dispatch = useDispatch();
   // const BASE_URL = "http://localhost:5000";
-  const BASE_URL = import.meta.env.NODE_ENV === 'production' 
-  ? "*" 
-  : "http://localhost:5000"
+  // const BASE_URL = import.meta.env.NODE_ENV === 'production' 
+  // ? "*" 
+  // : "http://localhost:5000"
+  const BASE_URL = window.location.origin;
 
   useEffect(() => {
     if (currentUser) {
       console.log("Current user:", currentUser);
       // Initialize socket connection
+      // const socketInstance = io(BASE_URL, {
+      //   query: {
+      //     userId: currentUser._id,
+      //   },
+      // });
       const socketInstance = io(BASE_URL, {
         query: {
-          userId: currentUser._id,
+          userId: currentUser._id, // Send userId to the server for identification
         },
+        withCredentials: true,  // Ensure cookies are sent with the request
+        transports: ['websocket', 'polling'],  // Define transport methods
+        reconnection: true,  // Enable reconnection attempts
+        reconnectionAttempts: 5,  // Limit reconnection attempts
+        reconnectionDelay: 1000,  // Set delay between reconnection attempts
       });
+      
       dispatch(setSocket(socketInstance));
 
       // Listen for online users
