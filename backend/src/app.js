@@ -35,6 +35,9 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import authRouter from "./routes/auth.routes.js";
+import messageRouter from "./routes/message.route.js";
+
 
 const app = express();
 
