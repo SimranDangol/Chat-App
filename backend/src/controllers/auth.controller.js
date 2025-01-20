@@ -103,39 +103,39 @@ export const login = asyncHandler(async (req, res) => {
     );
 });
 
-export const logout = asyncHandler(async (req, res) => {
-  // Getting user from middleware
-  const userId = req.user?._id;
+// export const logout = asyncHandler(async (req, res) => {
+//   // Getting user from middleware
+//   const userId = req.user?._id;
 
-  if (!userId) {
-    throw new ApiError(401, "Unauthorized request");
-  }
+//   if (!userId) {
+//     throw new ApiError(401, "Unauthorized request");
+//   }
 
-  // Find user and update their refresh token to undefined
-  await User.findByIdAndUpdate(
-    userId,
-    {
-      $unset: {
-        refreshToken: 1,
-      },
-    },
-    {
-      new: true,
-    }
-  );
+//   // Find user and update their refresh token to undefined
+//   await User.findByIdAndUpdate(
+//     userId,
+//     {
+//       $unset: {
+//         refreshToken: 1,
+//       },
+//     },
+//     {
+//       new: true,
+//     }
+//   );
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
+//   const options = {
+//     httpOnly: true,
+//     secure: true,
+//   };
 
-  // Clear cookies
-  return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, "User logged out successfully"));
-});
+//   // Clear cookies
+//   return res
+//     .status(200)
+//     .clearCookie("accessToken", options)
+//     .clearCookie("refreshToken", options)
+//     .json(new ApiResponse(200, "User logged out successfully"));
+// });
 
 export const updateProfile = asyncHandler(async (req, res) => {
   const { profilePic } = req.body;
@@ -167,4 +167,77 @@ export const getUsersforSidebar = asyncHandler(async (req, res) => {
   }).select("-password"); // find all the users but dont find currently logged in Users
   res.status(200).json(filteredUsers);
 });
+
+
+export const logout = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+
+  // Remove the refresh token from the user's document in the database
+  await User.findByIdAndUpdate(_id, {
+    $unset: { refreshToken: 1 },
+  });
+
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // Secure cookie in production
+    sameSite: 'strict',
+  };
+
+  // Clear the access and refresh token cookies
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User logged out"));
+});
+
+
+
+export const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken = req.cookies?.refreshToken;
+  
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    const user = await User.findById(decodedToken?._id);
+    if (!user) {
+      throw new ApiError(401, "Invalid refresh token");
+    }
+
+    if (incomingRefreshToken !== user?.refreshToken) {
+      throw new ApiError(401, "Refresh token is expired or used");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Secure cookie in production
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+      sameSite: 'strict',
+    };
+
+    const { accessToken, refreshToken } = await generateRefreshandAccessTokens(user._id);
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken },
+          "Access token refreshed"
+        )
+      );
+  } catch (error) {
+    throw new ApiError(401, error?.message || "Invalid refresh token");
+  }
+});
+
 

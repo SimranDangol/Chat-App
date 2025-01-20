@@ -4,6 +4,7 @@ import {
   getUsersforSidebar,
   login,
   logout,
+  refreshAccessToken,
   register,
   updateProfile,
 } from "../controllers/auth.controller.js";
@@ -18,5 +19,7 @@ router.route("/logout").post(verifyJWT, logout);
 router.route("/update-profile").put(verifyJWT, updateProfile);
 router.route("/check").get(verifyJWT, checkAuth);
 router.route("/users").get(verifyJWT, getUsersforSidebar);
+router.route("/refresh-token").post(refreshAccessToken);
+
 
 export default router;

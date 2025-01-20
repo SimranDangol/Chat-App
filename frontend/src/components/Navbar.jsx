@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React from "react";
 import { Settings, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,10 +18,10 @@ const Navbar = () => {
   const handleLogout = async () => {
     dispatch(signOutStart());
     try {
-      await axiosInstance.post("/auth/logout");
+      await axiosInstance.post("/auth/logout"); // Call backend to logout
       dispatch(signOutSuccess());
       toast.success("Logout successful");
-      navigate("/login");
+      navigate("/login"); // Redirect to login page
     } catch (error) {
       console.error("Logout failed", error);
       dispatch(signOutFailure(error.message));
@@ -30,9 +29,7 @@ const Navbar = () => {
     }
   };
 
-  const navigateToProfile = () => {
-    navigate("/profile"); // Navigates to the profile page
-  };
+ 
 
   return (
     <nav className="flex items-center justify-between px-4 py-2 text-yellow-500 bg-black">
@@ -43,7 +40,6 @@ const Navbar = () => {
       {/* Navigation Links */}
       <div className="flex items-center gap-4">
         {/* Profile Button */}
-       
         {/* Logout */}
         <Button
           variant="ghost"

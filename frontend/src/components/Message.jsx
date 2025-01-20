@@ -1,10 +1,10 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "@/redux/chat/messageslice";
 import { axiosInstance } from "@/lib/axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2 } from "lucide-react";  // Import ShadCN Spinner
 import useGetRealTimeMessage from "../hooks/useRealTimeMessage";
 
 const Message = () => {
@@ -13,18 +13,24 @@ const Message = () => {
   const dispatch = useDispatch();
   const { messages } = useSelector((state) => state.message);
   const { currentUser } = useSelector((state) => state.user);
+  
+  // Loading state
+  const [loading, setLoading] = useState(true);
 
   useGetRealTimeMessage();
 
   useEffect(() => {
     if (selectedUser?._id) {
       const fetchMessages = async () => {
+        setLoading(true); // Set loading to true while fetching
         try {
           const res = await axiosInstance.get(`/message/${selectedUser._id}`);
           dispatch(setMessages(res.data?.data || []));
         } catch (error) {
           console.error("Error fetching messages:", error);
           dispatch(setMessages([]));
+        } finally {
+          setLoading(false); // Set loading to false after the fetch completes
         }
       };
       fetchMessages();
@@ -34,6 +40,15 @@ const Message = () => {
   useEffect(() => {
     scroll.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  if (loading) {
+    // Show loading spinner if messages are being fetched
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2  />  {/* Use ShadCN UI Spinner here */}
+      </div>
+    );
+  }
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return (
@@ -76,9 +91,7 @@ const Message = () => {
                   </p>
                 </div>
                 <span
-                  className={`text-xs text-gray-500 mt-1 ${
-                    isCurrentUser ? "text-right" : "text-left"
-                  }`}
+                  className={`text-xs text-gray-500 mt-1 ${isCurrentUser ? "text-right" : "text-left"}`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -105,4 +118,3 @@ const Message = () => {
 };
 
 export default Message;
-
