@@ -77,6 +77,10 @@ import { Server } from "socket.io";
 let io;
 const userSocketMap = {}; // Store userId to socketId mapping
 
+export const getReceiverSocketId = (receiverId) => {
+  return userSocketMap[receiverId];
+};
+
 export const initializeSocket = (httpServer) => {
   io = new Server(httpServer, {
     cors: {
@@ -112,5 +116,12 @@ export const initializeSocket = (httpServer) => {
     }
   });
 
+  return io;
+};
+
+export const getIO = () => {
+  if (!io) {
+    throw new Error("Socket.IO not initialized");
+  }
   return io;
 };
