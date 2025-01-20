@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./Layout";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile";
 import Home from "./pages/Home";
 import { Toaster } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
@@ -13,42 +12,36 @@ import { setOnlineUsers } from "./redux/user/userSlice";
 
 const App = () => {
   const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
+
   const dispatch = useDispatch();
   const BASE_URL = "http://localhost:5000";
 
   useEffect(() => {
-    if (currentUser?._id) {
-      console.log("Connecting socket with user ID:", currentUser._id);
-      
-      const socket = io(BASE_URL, {
-        withCredentials: true,
+    if (currentUser) {
+      console.log("Current user:", currentUser);
+      // Initialize socket connection
+      const socketInstance = io(BASE_URL, {
         query: {
-          userId: currentUser._id.toString()
-        }
+          userId: currentUser._id,
+        },
       });
+      dispatch(setSocket(socketInstance));
 
-      socket.on("connect", () => {
-        console.log("Socket connected successfully");
-      });
-
-      socket.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
-      });
-
-      socket.on("getOnlineUsers", (onlineUsers) => {
-        console.log("Online users received:", onlineUsers);
+      // Listen for online users
+      socketInstance.on("getOnlineUsers", (onlineUsers) => {
+        console.log("Online users:", onlineUsers);
         dispatch(setOnlineUsers(onlineUsers));
       });
 
-      dispatch(setSocket(socket));
-
+      // Cleanup on component unmount or when currentUser changes
       return () => {
-        if (socket) {
-          socket.disconnect();
-        }
+        console.log("Disconnecting socket...");
+        socketInstance.disconnect();
+        dispatch(setSocket(null)); // Optionally reset socket state
       };
     }
-  }, [currentUser, dispatch]); // <-- Added closing parenthesis
+  }, [currentUser, dispatch]);
 
   return (
     <BrowserRouter>
@@ -61,10 +54,6 @@ const App = () => {
           />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
-          <Route
-            path="profile"
-            element={currentUser ? <Profile /> : <Navigate to="/login" />}
-          />
         </Route>
       </Routes>
     </BrowserRouter>

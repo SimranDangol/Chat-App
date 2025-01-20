@@ -9,7 +9,11 @@ import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { CiChat2 } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "@/lib/axios";
-import { signInStart, signInSuccess, signInFailure } from "@/redux/user/userSlice";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "@/redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -22,6 +26,9 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser?._id);
+  
 
   const handleChange = (e) => {
     setFormData({

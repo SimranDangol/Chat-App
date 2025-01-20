@@ -1,46 +1,39 @@
-import { MessageCircle } from "lucide-react";
-import ChatHeader from "./ChatHeader";
+import React from "react";
 import { useSelector } from "react-redux";
-import { Card, CardContent } from "@/components/ui/card";
-import MessageInput from "./MessageInput";
+import ChatHeader from "./ChatHeader";
 import Message from "./Message";
+import MessageInput from "./MessageInput";
+import { Card } from "@/components/ui/card";
+import { MessageCircle } from "lucide-react";
 
 const ChatContainer = () => {
-  const selectedUser = useSelector((state) => state.user.selectedUser);
-  console.log(selectedUser);
+  const { selectedUser } = useSelector((state) => state.user);
+
+  if (!selectedUser) {
+    return (
+      <div className="flex flex-col items-center justify-center flex-grow h-screen bg-gray-900">
+        <Card className="p-6 bg-gray-800 border-gray-700">
+          <div className="flex flex-col items-center text-center">
+            <div className="p-3 mb-4 bg-gray-700 rounded-full">
+              <MessageCircle className="w-6 h-6 text-blue-500" />
+            </div>
+            <h2 className="mb-2 text-xl font-semibold text-gray-200">
+              Welcome to Chat
+            </h2>
+            <p className="text-sm text-gray-400">
+              Select a conversation to start messaging
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-900">
-      {selectedUser && <ChatHeader className="w-full" />}
-
-      {!selectedUser ? (
-        <div className="flex flex-col items-center justify-center flex-1">
-          <Card className="bg-transparent border-none shadow-none">
-            <CardContent className="pt-6 text-center">
-              <div className="mb-4">
-                <div className="flex items-center justify-center w-8 h-8 mx-auto rounded-lg bg-slate-700">
-                  <MessageCircle className="w-5 h-5 text-amber-500" />
-                </div>
-              </div>
-              <h1 className="mb-2 text-xl font-semibold text-amber-500">
-                Welcome to Chatty!
-              </h1>
-              <p className="text-slate-500">
-                Select a conversation from the sidebar to start chatting
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
-        <div className="flex-1">
-          {/* Chat content */}
-          <Message />
-          <div className="flex-1 p-4 overflow-y-auto">
-            {/* Messages or chat history */}
-          </div>
-          <MessageInput />
-        </div>
-      )}
+    <div className="flex flex-col flex-1 h-screen bg-gray-900">
+      <ChatHeader />
+      <Message />
+      <MessageInput />
     </div>
   );
 };

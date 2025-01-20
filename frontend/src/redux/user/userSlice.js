@@ -6,7 +6,7 @@ const initialState = {
   selectedUser: null, /// // Track the currently selected user
   loading: false,
   error: null,
-  onlineUsers:[]
+  onlineUsers: [],
 };
 
 const userSlice = createSlice({
@@ -18,10 +18,11 @@ const userSlice = createSlice({
       state.error = null;
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload;
+      console.log("signInSuccess called with payload:", action.payload);
+      state.currentUser = action.payload.message.user;
       state.loading = false;
       state.error = null;
-      state.selectedUser = null; 
+      state.selectedUser = null;
     },
     signInFailure: (state, action) => {
       state.loading = false;
@@ -49,7 +50,7 @@ const userSlice = createSlice({
       state.otherUsers = []; // Clear other users on sign out
       state.loading = false;
       state.error = null;
-      state.selectedUser = null; 
+      state.selectedUser = null;
     },
     signOutFailure: (state, action) => {
       state.loading = false;
@@ -76,9 +77,9 @@ const userSlice = createSlice({
     deselectUser: (state) => {
       state.selectedUser = null;
     },
-    setOnlineUsers:(state,action)=>{
+    setOnlineUsers: (state, action) => {
       state.onlineUsers = action.payload;
-  }
+    },
   },
 });
 
@@ -98,7 +99,7 @@ export const {
   OtherUsersFailure,
   selectUser,
   deselectUser,
-  setOnlineUsers
+  setOnlineUsers,
 } = userSlice.actions;
 
 // Export reducer

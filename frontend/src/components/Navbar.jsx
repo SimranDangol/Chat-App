@@ -37,22 +37,13 @@ const Navbar = () => {
   return (
     <nav className="flex items-center justify-between px-4 py-2 text-yellow-500 bg-black">
       <div className="text-lg font-bold">
-        <Link to="/">Chatty</Link>
+        <Link to="/">Chat</Link>
       </div>
 
       {/* Navigation Links */}
       <div className="flex items-center gap-4">
         {/* Profile Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="flex items-center gap-2"
-          onClick={navigateToProfile}
-        >
-          <User className="w-4 h-4" />
-          <span>Profile</span>
-        </Button>
-
+       
         {/* Logout */}
         <Button
           variant="ghost"

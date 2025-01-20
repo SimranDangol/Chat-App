@@ -3,6 +3,9 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
+import { getReceiverSocketId,getIO } from "../../socket/socket.js";
+
+
 
 export const getMessages = asyncHandler(async (req, res) => {
   const { id: userToChatId } = req.params;
@@ -26,19 +29,30 @@ export const sendMessage = asyncHandler(async (req, res) => {
   const { id: receiverId } = req.params;
   const senderId = req.user._id;
 
+  // Create the new message
   const newMessage = await Message.create({
     senderId,
     receiverId,
     text,
   });
+  console.log("New Message Created:", newMessage);
 
-  console.log("New Message Created:", newMessage); // Log the new message
-
+  // Populate the message for a complete response
   const populatedMessage = await Message.findById(newMessage._id)
     .populate("senderId", "fullName _id")
     .populate("receiverId", "fullName _id");
 
-  console.log("Populated Message:", populatedMessage); // Log the populated message
+  // Get the receiver's socket ID
+  const receiverSocketId = getReceiverSocketId(receiverId);
+
+  // SOCKET.IO implementation
+  if (receiverSocketId) {
+    const io = getIO(); // Properly get the Socket.IO instance
+    io.to(receiverSocketId).emit("newMessage", {
+      message: populatedMessage,
+    });
+  }
 
   return res.status(201).json(new ApiResponse(201, populatedMessage));
 });
+
