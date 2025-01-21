@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
@@ -11,8 +10,8 @@ const ChatContainer = () => {
 
   if (!selectedUser) {
     return (
-      <div className="flex flex-col items-center justify-center flex-grow h-screen bg-gray-900">
-        <Card className="p-6 bg-gray-800 border-gray-700">
+      <div className="flex flex-col items-center justify-center flex-grow h-screen px-4 bg-gray-900">
+        <Card className="w-full max-w-md p-6 bg-gray-800 border-gray-700">
           <div className="flex flex-col items-center text-center">
             <div className="p-3 mb-4 bg-gray-700 rounded-full">
               <MessageCircle className="w-6 h-6 text-blue-500" />

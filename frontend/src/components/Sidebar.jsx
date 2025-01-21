@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { OtherUsersSuccess, selectUser } from "../redux/user/userSlice";
@@ -24,12 +26,14 @@ const Sidebar = () => {
   }, [dispatch]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900 border-r border-gray-800 w-80">
+    <div className="flex flex-col w-20 h-screen transition-all duration-300 bg-gray-900 border-r border-gray-800 md:w-80">
       {/* Header */}
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-gray-400" />
-          <h2 className="text-lg font-semibold text-gray-200">Contacts</h2>
+          <h2 className="hidden text-lg font-semibold text-gray-200 md:block">
+            Contacts
+          </h2>
         </div>
       </div>
 
@@ -47,7 +51,9 @@ const Sidebar = () => {
                 {/* Avatar */}
                 <div className="relative">
                   <Avatar className="w-10 h-10 border-2 border-transparent group-hover:border-gray-700">
-                    <AvatarImage src={user.profileImage || "/default-avatar.png"} />
+                    <AvatarImage
+                      src={user.profileImage || "/default-avatar.png"}
+                    />
                     <AvatarFallback className="text-gray-200 bg-gray-700">
                       {user.fullName?.charAt(0)}
                     </AvatarFallback>
@@ -57,8 +63,8 @@ const Sidebar = () => {
                   )}
                 </div>
 
-                {/* User Info */}
-                <div className="flex flex-col">
+                {/* User Info - Hidden on mobile */}
+                <div className="flex-col hidden md:flex">
                   <div className="flex items-center">
                     <span className="text-sm font-medium text-gray-200 truncate">
                       {user.fullName}

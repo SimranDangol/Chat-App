@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import User from "../models/user.model.js";
-import cloudinary from "../utils/cloudinary.js";
+
 
 export const generateRefreshandAccessTokens = async (userId) => {
   try {
@@ -103,40 +103,6 @@ export const login = asyncHandler(async (req, res) => {
     );
 });
 
-// export const logout = asyncHandler(async (req, res) => {
-//   // Getting user from middleware
-//   const userId = req.user?._id;
-
-//   if (!userId) {
-//     throw new ApiError(401, "Unauthorized request");
-//   }
-
-//   // Find user and update their refresh token to undefined
-//   await User.findByIdAndUpdate(
-//     userId,
-//     {
-//       $unset: {
-//         refreshToken: 1,
-//       },
-//     },
-//     {
-//       new: true,
-//     }
-//   );
-
-//   const options = {
-//     httpOnly: true,
-//     secure: true,
-//   };
-
-//   // Clear cookies
-//   return res
-//     .status(200)
-//     .clearCookie("accessToken", options)
-//     .clearCookie("refreshToken", options)
-//     .json(new ApiResponse(200, "User logged out successfully"));
-// });
-
 export const updateProfile = asyncHandler(async (req, res) => {
   const { profilePic } = req.body;
   const userId = req.user._id;
@@ -155,11 +121,6 @@ export const updateProfile = asyncHandler(async (req, res) => {
   res.status(200).json(updatedUser);
 });
 
-export const checkAuth = asyncHandler(async(req,res) => {
-    res.status(200).json(req.user);
-    res.status(500).json({ message: "Internal Server Error" });
-})
-
 export const getUsersforSidebar = asyncHandler(async (req, res) => {
   const loggedInUserId = req.user._id;
   const filteredUsers = await User.find({
@@ -167,7 +128,6 @@ export const getUsersforSidebar = asyncHandler(async (req, res) => {
   }).select("-password"); // find all the users but dont find currently logged in Users
   res.status(200).json(filteredUsers);
 });
-
 
 export const logout = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -179,11 +139,10 @@ export const logout = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // Secure cookie in production
-    sameSite: 'strict',
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
   };
 
-  // Clear the access and refresh token cookies
   return res
     .status(200)
     .clearCookie("accessToken", options)
@@ -191,11 +150,9 @@ export const logout = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out"));
 });
 
-
-
 export const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken = req.cookies?.refreshToken;
-  
+
   if (!incomingRefreshToken) {
     throw new ApiError(401, "Unauthorized request");
   }
@@ -217,12 +174,14 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Secure cookie in production
+      secure: process.env.NODE_ENV === "production",
       maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
-      sameSite: 'strict',
+      sameSite: "strict",
     };
 
-    const { accessToken, refreshToken } = await generateRefreshandAccessTokens(user._id);
+    const { accessToken, refreshToken } = await generateRefreshandAccessTokens(
+      user._id
+    );
 
     return res
       .status(200)
@@ -240,4 +199,11 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-
+export const checkAuth = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "User authenticated"));
+});

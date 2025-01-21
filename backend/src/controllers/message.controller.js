@@ -15,7 +15,7 @@ export const getMessages = asyncHandler(async (req, res) => {
       { senderId: userToChatId, receiverId: myId },
     ],
   })
-    .populate("senderId", "fullName _id") // Make sure to populate both name and _id
+    .populate("senderId", "fullName _id")
     .populate("receiverId", "fullName _id")
     .sort({ createdAt: 1 }); // Sort by creation time
 
@@ -27,7 +27,6 @@ export const sendMessage = asyncHandler(async (req, res) => {
   const { id: receiverId } = req.params;
   const senderId = req.user._id;
 
-  // Create the new message
   const newMessage = await Message.create({
     senderId,
     receiverId,
@@ -35,17 +34,15 @@ export const sendMessage = asyncHandler(async (req, res) => {
   });
   console.log("New Message Created:", newMessage);
 
-  // Populate the message for a complete response
   const populatedMessage = await Message.findById(newMessage._id)
     .populate("senderId", "fullName _id")
     .populate("receiverId", "fullName _id");
 
-  // Get the receiver's socket ID
   const receiverSocketId = getReceiverSocketId(receiverId);
 
   // SOCKET.IO implementation
   if (receiverSocketId) {
-    const io = getIO(); // Properly get the Socket.IO instance
+    const io = getIO();
     io.to(receiverSocketId).emit("newMessage", {
       message: populatedMessage,
     });

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "@/redux/chat/messageslice";
 import { axiosInstance } from "@/lib/axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2 } from "lucide-react";  // Import ShadCN Spinner
-import useGetRealTimeMessage from "../hooks/useRealTimeMessage";
+import { Loader2 } from "lucide-react";
 
 const Message = () => {
   const scroll = useRef();
@@ -13,16 +12,12 @@ const Message = () => {
   const dispatch = useDispatch();
   const { messages } = useSelector((state) => state.message);
   const { currentUser } = useSelector((state) => state.user);
-  
-  // Loading state
   const [loading, setLoading] = useState(true);
-
-  useGetRealTimeMessage();
 
   useEffect(() => {
     if (selectedUser?._id) {
       const fetchMessages = async () => {
-        setLoading(true); // Set loading to true while fetching
+        setLoading(true);
         try {
           const res = await axiosInstance.get(`/message/${selectedUser._id}`);
           dispatch(setMessages(res.data?.data || []));
@@ -30,7 +25,7 @@ const Message = () => {
           console.error("Error fetching messages:", error);
           dispatch(setMessages([]));
         } finally {
-          setLoading(false); // Set loading to false after the fetch completes
+          setLoading(false);
         }
       };
       fetchMessages();
@@ -42,15 +37,14 @@ const Message = () => {
   }, [messages]);
 
   if (loading) {
-    // Show loading spinner if messages are being fetched
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2  />  {/* Use ShadCN UI Spinner here */}
+        <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
-  if (!Array.isArray(messages) || messages.length === 0) {
+  if (!messages.length) {
     return (
       <div className="flex items-center justify-center h-full text-gray-400">
         No messages yet. Start a conversation!
@@ -60,7 +54,7 @@ const Message = () => {
 
   return (
     <ScrollArea className="flex-1 px-4">
-      <div className="py-4 space-y-4">
+      <div className="py-4 space-y-4 sm:space-y-3 md:space-y-5">
         {messages.map((msg) => {
           const myUserId = localStorage.getItem("userId") || currentUser?._id;
           const isCurrentUser = myUserId === msg.senderId?._id;
@@ -68,11 +62,15 @@ const Message = () => {
           return (
             <div
               key={msg._id}
-              className={`flex items-end gap-2 ${isCurrentUser ? "justify-end" : "justify-start"}`}
+              className={`flex items-end gap-2 ${
+                isCurrentUser ? "justify-end" : "justify-start"
+              }`}
             >
               {!isCurrentUser && (
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src={msg.senderId?.profileImage || "/default-avatar.png"} />
+                  <AvatarImage
+                    src={msg.senderId?.profileImage || "/default-avatar.png"}
+                  />
                   <AvatarFallback className="text-gray-200 bg-gray-700">
                     {msg.senderId?.fullName?.charAt(0)}
                   </AvatarFallback>
@@ -91,7 +89,9 @@ const Message = () => {
                   </p>
                 </div>
                 <span
-                  className={`text-xs text-gray-500 mt-1 ${isCurrentUser ? "text-right" : "text-left"}`}
+                  className={`text-xs text-gray-500 mt-1 ${
+                    isCurrentUser ? "text-right" : "text-left"
+                  }`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
@@ -102,7 +102,9 @@ const Message = () => {
               </div>
               {isCurrentUser && (
                 <Avatar className="w-8 h-8">
-                  <AvatarImage src={currentUser?.profileImage || "/default-avatar.png"} />
+                  <AvatarImage
+                    src={currentUser?.profileImage || "/default-avatar.png"}
+                  />
                   <AvatarFallback className="text-gray-200 bg-gray-700">
                     {currentUser?.fullName?.charAt(0)}
                   </AvatarFallback>

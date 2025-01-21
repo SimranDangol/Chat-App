@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
-  otherUsers: [], // Added otherUsers to the initial state
-  selectedUser: null, /// // Track the currently selected user
+  otherUsers: [], 
+  selectedUser: null, 
   loading: false,
   error: null,
   onlineUsers: [],
@@ -18,7 +18,6 @@ const userSlice = createSlice({
       state.error = null;
     },
     signInSuccess: (state, action) => {
-      console.log("signInSuccess called with payload:", action.payload);
       state.currentUser = action.payload.message.user;
       state.loading = false;
       state.error = null;
@@ -47,7 +46,7 @@ const userSlice = createSlice({
     },
     signOutSuccess: (state) => {
       state.currentUser = null;
-      state.otherUsers = []; // Clear other users on sign out
+      state.otherUsers = [];
       state.loading = false;
       state.error = null;
       state.selectedUser = null;
@@ -57,19 +56,18 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
-    // New actions for fetching other users
     OtherUsersStart: (state) => {
       state.loading = true;
       state.error = null;
     },
     OtherUsersSuccess: (state, action) => {
-      state.otherUsers = action.payload; // Set fetched users
+      state.otherUsers = action.payload;
       state.loading = false;
       state.error = null;
     },
     OtherUsersFailure: (state, action) => {
       state.loading = false;
-      state.error = action.payload; // Handle error
+      state.error = action.payload;
     },
     selectUser: (state, action) => {
       state.selectedUser = action.payload;
@@ -83,7 +81,6 @@ const userSlice = createSlice({
   },
 });
 
-// Export actions
 export const {
   signInStart,
   signInSuccess,
@@ -94,7 +91,7 @@ export const {
   signOutStart,
   signOutSuccess,
   signOutFailure,
-  OtherUsersStart, // New actions for fetching other users
+  OtherUsersStart,
   OtherUsersSuccess,
   OtherUsersFailure,
   selectUser,
@@ -102,5 +99,4 @@ export const {
   setOnlineUsers,
 } = userSlice.actions;
 
-// Export reducer
 export default userSlice.reducer;

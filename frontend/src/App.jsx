@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./Layout";
@@ -12,13 +13,8 @@ import { setOnlineUsers } from "./redux/user/userSlice";
 
 const App = () => {
   const { currentUser } = useSelector((state) => state.user);
-  console.log(currentUser);
-
   const dispatch = useDispatch();
-  // const BASE_URL = "http://localhost:5000";
-  // const BASE_URL = import.meta.env.NODE_ENV === 'production' 
-  // ? "*" 
-  // : "http://localhost:5000"
+
   const BASE_URL = window.location.origin;
 
   useEffect(() => {
@@ -34,13 +30,13 @@ const App = () => {
         query: {
           userId: currentUser._id, // Send userId to the server for identification
         },
-        withCredentials: true,  // Ensure cookies are sent with the request
-        transports: ['websocket', 'polling'],  // Define transport methods
-        reconnection: true,  // Enable reconnection attempts
-        reconnectionAttempts: 5,  // Limit reconnection attempts
-        reconnectionDelay: 1000,  // Set delay between reconnection attempts
+        withCredentials: true, // Ensure cookies are sent with the request
+        transports: ["websocket", "polling"], // Define transport methods
+        reconnection: true, // Enable reconnection attempts
+        reconnectionAttempts: 5, // Limit reconnection attempts
+        reconnectionDelay: 1000, // Set delay between reconnection attempts
       });
-      
+
       dispatch(setSocket(socketInstance));
 
       // Listen for online users
