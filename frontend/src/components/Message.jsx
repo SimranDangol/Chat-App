@@ -5,6 +5,8 @@ import { axiosInstance } from "@/lib/axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
+import useGetRealTimeMessage from "@/hooks/useRealTimeMessage";
+
 
 const Message = () => {
   const scroll = useRef();
@@ -13,6 +15,8 @@ const Message = () => {
   const { messages } = useSelector((state) => state.message);
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(true);
+
+  useGetRealTimeMessage(); 
 
   useEffect(() => {
     if (selectedUser?._id) {
@@ -62,9 +66,7 @@ const Message = () => {
           return (
             <div
               key={msg._id}
-              className={`flex items-end gap-2 ${
-                isCurrentUser ? "justify-end" : "justify-start"
-              }`}
+              className={`flex items-end gap-2 ${isCurrentUser ? "justify-end" : "justify-start"}`}
             >
               {!isCurrentUser && (
                 <Avatar className="w-8 h-8">
@@ -89,9 +91,7 @@ const Message = () => {
                   </p>
                 </div>
                 <span
-                  className={`text-xs text-gray-500 mt-1 ${
-                    isCurrentUser ? "text-right" : "text-left"
-                  }`}
+                  className={`text-xs text-gray-500 mt-1 ${isCurrentUser ? "text-right" : "text-left"}`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",

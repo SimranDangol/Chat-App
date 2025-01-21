@@ -35,7 +35,10 @@ const MessageInput = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-gray-900 border-t border-gray-800 sm:p-3 md:p-4">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 bg-gray-900 border-t border-gray-800 sm:p-3 md:p-4"
+    >
       <div className="flex items-center gap-2 sm:gap-1 md:gap-3">
         <Input
           type="text"
@@ -44,7 +47,11 @@ const MessageInput = () => {
           placeholder="Type a message..."
           className="flex-1 text-gray-200 bg-gray-800 border-gray-700 placeholder:text-gray-500 sm:h-10 sm:text-sm md:h-12 md:text-base"
         />
-        <Button type="submit" disabled={!message.trim()} className="px-3 py-2 sm:px-2 sm:py-1 md:px-3 md:py-2">
+        <Button
+          type="submit"
+          disabled={!message.trim()}
+          className="px-3 py-2 sm:px-2 sm:py-1 md:px-3 md:py-2"
+        >
           <Send className="w-5 h-5" />
         </Button>
       </div>
