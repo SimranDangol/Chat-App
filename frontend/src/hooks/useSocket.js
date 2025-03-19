@@ -1,32 +1,34 @@
-// hooks/useSocket.js
-import { setSocket } from "@/redux/socket/socketSlice";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { setSocket } from "@/redux/socket/socketSlice";
 
-
-// Custom hook to manage socket connection
-const useSocket = () => {
+export const useSocket = () => {
   const [socket, setSocketState] = useState(null);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Determine the server URL dynamically
     const serverURL =
       process.env.NODE_ENV === "production"
-        ? "https://your-production-server.com" // Your production server URL
-        : "http://localhost:5173"; // Development URL
+        ? "https://your-production-server.com"
+        : "http://localhost:5173";
 
-    // Assuming you're using socket.io-client to connect to the server
     const socketInstance = io(serverURL, {
-      query: { userId: localStorage.getItem("userId") || "defaultUserId" }, // Pass userId as a query param
+      query: { userId: localStorage.getItem("userId") || "defaultUserId" },
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
     });
 
-    // Store the socket instance in the Redux store for global access
-    dispatch(setSocket(socketInstance));
-    setSocketState(socketInstance);
+    socketInstance.on("connect", () => {
+      console.log("Socket connected:", socketInstance.id);
+    });
 
-    // Cleanup on component unmount
+    setSocketState(socketInstance);
+    dispatch(setSocket(socketInstance));
+
     return () => {
       socketInstance.disconnect();
     };
@@ -34,5 +36,3 @@ const useSocket = () => {
 
   return socket;
 };
-
-export default useSocket;

@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import useSocket from "@/hooks/useSocket";  // Ensure you are using the socket instance
+import { useSocket } from "@/hooks/useSocket"; // Ensure you are using the socket instance
 
 const TypingIndicator = () => {
   const { selectedUser } = useSelector((state) => state.user);
   const [isTyping, setIsTyping] = useState(false);
-  const socket = useSocket();  // Get socket instance from custom hook
+  const socket = useSocket();
 
   useEffect(() => {
     if (socket) {
-      // Listen for typing event
+      // Listen for typing events from the selected user
       socket.on("typing", (senderId) => {
-        if (senderId !== selectedUser?._id) {
-          setIsTyping(true);  // Show typing indicator when the other user is typing
+        if (selectedUser?._id === senderId) {
+          setIsTyping(true);
         }
       });
 
-      // Listen for stopTyping event
       socket.on("stopTyping", (senderId) => {
-        if (senderId !== selectedUser?._id) {
-          setIsTyping(false);  // Hide typing indicator when the other user stops typing
+        if (selectedUser?._id === senderId) {
+          setIsTyping(false);
         }
       });
 
-      // Cleanup event listeners on component unmount
+      // Cleanup on component unmount
       return () => {
         socket.off("typing");
         socket.off("stopTyping");
       };
+    } else {
+      console.warn("Socket is not initialized yet");
     }
-  }, [socket, selectedUser]);  // Run effect when socket or selectedUser changes
+  }, [socket, selectedUser]);
 
   return (
     isTyping && (
