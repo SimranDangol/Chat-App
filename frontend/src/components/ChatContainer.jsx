@@ -4,6 +4,7 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import { Card } from "@/components/ui/card";
 import { MessageCircle } from "lucide-react";
+import TypingIndicator from "./TypingIndicator";
 
 const ChatContainer = () => {
   const { selectedUser } = useSelector((state) => state.user);
@@ -33,6 +34,7 @@ const ChatContainer = () => {
       <ChatHeader />
       <Message />
       <MessageInput />
+      <TypingIndicator />
     </div>
   );
 };

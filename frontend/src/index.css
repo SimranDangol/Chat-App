@@ -65,3 +65,16 @@
   }
 }
 
+.typing-indicator {
+  display: inline-block;
+  font-size: 14px;
+  color: #aaa;
+  animation: blink 1s infinite steps(1, end);
+}
+
+@keyframes blink {
+  0% { content: "Typing" }
+  33% { content: "Typing." }
+  66% { content: "Typing.." }
+  100% { content: "Typing..." }
+}
