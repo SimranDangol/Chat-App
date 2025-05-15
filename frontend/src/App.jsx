@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useEffect } from "react";
+/* eslint-disable no-undef */
+import  { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./Layout";
 import Register from "./pages/Register";
@@ -15,42 +15,55 @@ const App = () => {
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const BASE_URL = window.location.origin;
+
+  const SOCKET_SERVER_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://chat-app-1-vb3u.onrender.com"
+      : "http://localhost:5000";
 
   useEffect(() => {
     if (currentUser) {
       console.log("Current user:", currentUser);
-      // Initialize socket connection
-      // const socketInstance = io(BASE_URL, {
-      //   query: {
-      //     userId: currentUser._id,
-      //   },
-      // });
-      const socketInstance = io(BASE_URL, {
-        query: {
-          userId: currentUser._id, // Send userId to the server for identification
-        },
-        withCredentials: true, // Ensure cookies are sent with the request
-        transports: ["websocket", "polling"], // Define transport methods
-        reconnection: true, // Enable reconnection attempts
-        reconnectionAttempts: 5, // Limit reconnection attempts
-        reconnectionDelay: 1000, // Set delay between reconnection attempts
-      });
 
-      dispatch(setSocket(socketInstance));
+      try {
+        const socketInstance = io(SOCKET_SERVER_URL, {
+          query: {
+            userId: currentUser._id,
+          },
+          withCredentials: true,
+          transports: ["websocket", "polling"],
+          reconnection: true,
+          reconnectionAttempts: 5,
+          reconnectionDelay: 1000,
+          timeout: 20000, // Increased timeout
+        });
 
-      // Listen for online users
-      socketInstance.on("getOnlineUsers", (onlineUsers) => {
-        console.log("Online users:", onlineUsers);
-        dispatch(setOnlineUsers(onlineUsers));
-      });
+        // Add connection event listeners for better debugging
+        socketInstance.on("connect", () => {
+          console.log("Socket connected successfully:", socketInstance.id);
+        });
 
-      // Cleanup on component unmount or when currentUser changes
-      return () => {
-        console.log("Disconnecting socket...");
-        socketInstance.disconnect();
-        dispatch(setSocket(null)); // Optionally reset socket state
-      };
+        socketInstance.on("connect_error", (error) => {
+          console.error("Socket connection error:", error);
+        });
+
+        dispatch(setSocket(socketInstance));
+
+        // Listen for online users
+        socketInstance.on("getOnlineUsers", (onlineUsers) => {
+          console.log("Online users:", onlineUsers);
+          dispatch(setOnlineUsers(onlineUsers));
+        });
+
+        // Cleanup on component unmount or when currentUser changes
+        return () => {
+          console.log("Disconnecting socket...");
+          socketInstance.disconnect();
+          dispatch(setSocket(null));
+        };
+      } catch (error) {
+        console.error("Failed to initialize socket:", error);
+      }
     }
   }, [currentUser, dispatch]);
 
