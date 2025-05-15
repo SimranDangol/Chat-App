@@ -13,16 +13,17 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS configuration
+import cors from "cors";
+
 const CLIENT_ORIGIN = "https://chat-app-pearl-three.vercel.app";
 
-if (process.env.NODE_ENV === "production") {
-  app.use(
-    cors({
-      origin: CLIENT_ORIGIN,
-      credentials: true,
-    })
-  );
-}
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN,
+    credentials: true, // Required for cookies/auth
+  })
+);
+
 
 
 // API routes
