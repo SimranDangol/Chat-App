@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -17,7 +18,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     dispatch(signOutStart());
     try {
-      await axiosInstance.post("/auth/logout"); // Call backend to logout
+      await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/logout`); // Call backend to logout
       dispatch(signOutSuccess());
       toast.success("Logout successful");
       navigate("/login"); // Redirect to login page

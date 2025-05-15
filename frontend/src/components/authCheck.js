@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // utils/authCheck.js
 import { axiosInstance } from "../lib/axios";
 import { store } from "../redux/app/store";
@@ -6,7 +7,7 @@ import { signOutSuccess, signInSuccess } from "../redux/user/userSlice";
 export const checkAuthStatus = async () => {
   try {
     // First try to verify the current session
-    const response = await axiosInstance.get("/auth/check");
+    const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/auth/check`);
     if (response.data) {
       store.dispatch(signInSuccess({ message: { user: response.data } }));
       return true;
@@ -15,7 +16,7 @@ export const checkAuthStatus = async () => {
   } catch (error) {
     // If verification fails, try to refresh the token
     try {
-      const refreshResponse = await axiosInstance.post("/auth/refresh-token");
+      const refreshResponse = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/refresh-token`);
       if (refreshResponse.data?.data) {
         store.dispatch(signInSuccess({ message: { user: refreshResponse.data.data } }));
         return true;
@@ -39,7 +40,7 @@ axiosInstance.interceptors.response.use(
       
       try {
         // Try to refresh the token
-        await axiosInstance.post("/auth/refresh-token");
+        await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/refresh-token`);
         // Retry the original request
         return axiosInstance(originalRequest);
       } catch (refreshError) {

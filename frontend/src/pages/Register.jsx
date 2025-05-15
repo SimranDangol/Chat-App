@@ -58,7 +58,8 @@ const Register = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.post("/auth/register", {
+      // eslint-disable-next-line no-undef
+      const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,

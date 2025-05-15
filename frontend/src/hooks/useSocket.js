@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { useDispatch } from "react-redux";
@@ -10,7 +11,7 @@ export const useSocket = () => {
   useEffect(() => {
     const serverURL =
       process.env.NODE_ENV === "production"
-        ? "https://your-production-server.com"
+        ? "https://chat-app-1-vb3u.onrender.com/login"
         : "http://localhost:5173";
 
     const socketInstance = io(serverURL, {

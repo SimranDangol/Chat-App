@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 
 import React, { useEffect } from "react";
@@ -14,7 +15,7 @@ const Sidebar = () => {
 
   const fetchOtherUsers = async () => {
     try {
-      const res = await axiosInstance.get("/auth/users");
+      const res = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/auth/users`);
       dispatch(OtherUsersSuccess(res.data));
     } catch (error) {
       console.error("Error fetching users:", error);

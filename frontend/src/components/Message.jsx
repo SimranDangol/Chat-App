@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMessages } from "@/redux/chat/messageslice";
@@ -7,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
 import useGetRealTimeMessage from "@/hooks/useRealTimeMessage";
 
-
 const Message = () => {
   const scroll = useRef();
   const { selectedUser } = useSelector((state) => state.user);
@@ -16,14 +16,14 @@ const Message = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(true);
 
-  useGetRealTimeMessage(); 
+  useGetRealTimeMessage();
 
   useEffect(() => {
     if (selectedUser?._id) {
       const fetchMessages = async () => {
         setLoading(true);
         try {
-          const res = await axiosInstance.get(`/message/${selectedUser._id}`);
+          const res = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/message/${selectedUser._id}`);
           dispatch(setMessages(res.data?.data || []));
         } catch (error) {
           console.error("Error fetching messages:", error);
@@ -66,7 +66,9 @@ const Message = () => {
           return (
             <div
               key={msg._id}
-              className={`flex items-end gap-2 ${isCurrentUser ? "justify-end" : "justify-start"}`}
+              className={`flex items-end gap-2 ${
+                isCurrentUser ? "justify-end" : "justify-start"
+              }`}
             >
               {!isCurrentUser && (
                 <Avatar className="w-8 h-8">
@@ -91,7 +93,9 @@ const Message = () => {
                   </p>
                 </div>
                 <span
-                  className={`text-xs text-gray-500 mt-1 ${isCurrentUser ? "text-right" : "text-left"}`}
+                  className={`text-xs text-gray-500 mt-1 ${
+                    isCurrentUser ? "text-right" : "text-left"
+                  }`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
