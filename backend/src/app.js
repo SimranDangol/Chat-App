@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS configuration
-const CLIENT_ORIGIN = "https://chat-app-pearl-three.vercel.app/login; // 
+const CLIENT_ORIGIN = "https://chat-app-pearl-three.vercel.app";
 
 if (process.env.NODE_ENV === "production") {
   app.use(
