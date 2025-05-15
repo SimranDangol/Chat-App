@@ -24,20 +24,8 @@ app.use(
   })
 );
 
-
-
 // API routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/message", messageRouter);
-
-// Serve static files in production
-// if (process.env.NODE_ENV === "production") {
-//   const __dirname = path.resolve();
-//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-//   });
-// }
 
 export default app;

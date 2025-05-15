@@ -11,8 +11,8 @@ export const useSocket = () => {
   useEffect(() => {
     const serverURL =
       process.env.NODE_ENV === "production"
-        ? "https://chat-app-1-vb3u.onrender.com/login"
-        : "http://localhost:5173";
+        ? "https://chat-app-1-vb3u.onrender.com"
+        : "http://localhost:5000";
 
     const socketInstance = io(serverURL, {
       query: { userId: localStorage.getItem("userId") || "defaultUserId" },
