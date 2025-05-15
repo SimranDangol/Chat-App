@@ -1,13 +1,9 @@
-// eslint-disable-next-line no-unused-vars
-import { store } from "@/redux/app/store";
+// axios.js
 import axios from "axios";
 
- const axiosInstance = axios.create({
-  baseURL: "/api/v1",
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL, 
   withCredentials: true,
 });
 
-
-export {axiosInstance};
-
-
+export { axiosInstance };

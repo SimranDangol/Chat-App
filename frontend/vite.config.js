@@ -1,22 +1,20 @@
-/* eslint-disable no-undef */
-import path from "path";
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+// vite.config.js
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
   server: {
+    port: 5173,
     proxy: {
-      '/api/v1': {
+      // This is for local development only
+      '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false,
       },
     },
   },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+  build: {
+    outDir: 'dist',
   },
 });
