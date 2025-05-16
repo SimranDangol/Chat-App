@@ -74,7 +74,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     dispatch(signOutStart());
     try {
-      await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/logout`);
+      await axiosInstance.post("/auth/logout");
       dispatch(signOutSuccess());
       toast.success("Logout successful");
       navigate("/login");
