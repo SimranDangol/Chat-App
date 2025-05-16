@@ -1,4 +1,5 @@
-/* eslint-disable no-undef */
+
+
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addMessage } from "@/redux/chat/messageslice";
@@ -26,7 +27,7 @@ const MessageInput = () => {
     if (!message.trim()) return;
     try {
       const res = await axiosInstance.post(
-        `${import.meta.env.VITE_API_URL}/message/send/${selectedUser._id}`,
+        `/message/send/${selectedUser._id}`,
         {
           text: message,
           senderId: localStorage.getItem("userId") || currentUser?._id,

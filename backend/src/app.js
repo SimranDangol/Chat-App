@@ -13,19 +13,29 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS configuration
-import cors from "cors";
-
-const CLIENT_ORIGIN = "https://chat-app-pearl-three.vercel.app";
-
-app.use(
-  cors({
-    origin: CLIENT_ORIGIN,
-    credentials: true, // Required for cookies/auth
-  })
-);
+if (process.env.NODE_ENV === "production") {
+  app.use(cors());
+} else {
+  app.use(
+    cors({
+      origin: "http://localhost:5173",
+      credentials: true,
+    })
+  );
+}
 
 // API routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/message", messageRouter);
+
+// Serve static files in production
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 export default app;

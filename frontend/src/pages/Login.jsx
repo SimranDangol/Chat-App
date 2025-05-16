@@ -58,8 +58,7 @@ const Login = () => {
 
     dispatch(signInStart());
     try {
-      // eslint-disable-next-line no-undef
-      const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/auth/login`, formData); 
+      const response = await axiosInstance.post("/auth/login", formData);
       dispatch(signInSuccess(response.data));
       toast.success("Login successful");
       navigate("/");
