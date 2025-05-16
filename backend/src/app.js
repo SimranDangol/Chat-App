@@ -15,7 +15,7 @@ app.use(cookieParser());
 // CORS configuration
 const allowedOrigin =
   process.env.NODE_ENV === "production"
-    ? "https://chat-app-wbtr.onrender.com/" 
+    ? "https://chat-app-wbtr.onrender.com" 
     : "http://localhost:5173";
 
 app.use(
