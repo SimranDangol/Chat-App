@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS configuration
-aconst allowedOrigin =
+const allowedOrigin =
   process.env.NODE_ENV === "production"
     ? "https://chat-app-wbtr.onrender.com/" 
     : "http://localhost:5173";
