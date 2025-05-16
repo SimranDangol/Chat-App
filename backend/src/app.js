@@ -7,25 +7,36 @@ import messageRouter from "./routes/message.route.js";
 
 const app = express();
 
-//  middleware
+// Middleware
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
-// CORS configuration
-const allowedOrigin =
-  process.env.NODE_ENV === "production"
-    ? "https://chat-app-wbtr.onrender.com" 
-    : "http://localhost:5173";
+// Enhanced CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins =
+      process.env.NODE_ENV === "production"
+        ? ["https://chat-app-wbtr.onrender.com"]
+        : ["http://localhost:5173", "http://127.0.0.1:5173"];
 
-app.use(
-  cors({
-    origin: allowedOrigin,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options("*", cors(corsOptions));
 
 // API routes
 app.use("/api/v1/auth", authRouter);
