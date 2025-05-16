@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
-  otherUsers: [], 
-  selectedUser: null, 
+  otherUsers: [],
+  selectedUser: null,
   loading: false,
   error: null,
   onlineUsers: [],
@@ -18,7 +18,11 @@ const userSlice = createSlice({
       state.error = null;
     },
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload.message.user;
+      // Make sure we handle the user data correctly
+      // Some backends might send user in a nested 'message.user' structure
+      // We need to handle both cases
+      const userData = action.payload.message?.user || action.payload.user || action.payload;
+      state.currentUser = userData;
       state.loading = false;
       state.error = null;
       state.selectedUser = null;
@@ -55,7 +59,7 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-
+    
     OtherUsersStart: (state) => {
       state.loading = true;
       state.error = null;

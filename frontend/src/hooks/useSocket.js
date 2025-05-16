@@ -11,7 +11,7 @@ export const useSocket = () => {
   useEffect(() => {
     const serverURL =
       process.env.NODE_ENV === "production"
-        ? "https://your-production-server.com"
+        ? "hhttps://chat-app-2-p1tx.onrender.com"
         : "http://localhost:5173";
 
     const socketInstance = io(serverURL, {
