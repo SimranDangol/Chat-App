@@ -13,16 +13,19 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 // CORS configuration
-if (process.env.NODE_ENV === "production") {
-  app.use(cors());
-} else {
-  app.use(
-    cors({
-      origin: "http://localhost:5173",
-      credentials: true,
-    })
-  );
-}
+aconst allowedOrigin =
+  process.env.NODE_ENV === "production"
+    ? "https://chat-app-wbtr.onrender.com/" 
+    : "http://localhost:5173";
+
+app.use(
+  cors({
+    origin: allowedOrigin,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // API routes
 app.use("/api/v1/auth", authRouter);
